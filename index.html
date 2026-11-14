@@ -88,7 +88,7 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
 <div class="wrap">
   <header>
     <h1>Garage Office 3D</h1>
-    <p class="sub">9.2 × 13.8 m garage with a two-level glass office at the back.</p>
+    <p class="sub">9.2 × 13.8 m garage with a glass office under an open deck at the back.</p>
   </header>
 
   <section class="stage" id="stage" aria-label="3D model of the garage">
@@ -126,13 +126,14 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
 
   <dl class="specs">
     <div><dt>Space</dt><dd>9.2 m wide × 13.8 m deep</dd></div>
-    <div><dt>Office</dt><dd>4.6 × 4 m, two levels, centered at back</dd></div>
-    <div><dt>Back wall</dt><dd>WC left, store right, stairs beside office</dd></div>
+    <div><dt>Office</dt><dd>4.6 × 4 m glass office, centered at back, under the deck</dd></div>
+    <div><dt>Upper deck</dt><dd>Open deck at +2.8 m with glass guard: 3.9 × 4 m glass meeting room left, terrace with sofa and ZERO GARAGE sign right</dd></div>
+    <div><dt>Back wall</dt><dd>WC left, store right, dark partitions with louvered doors</dd></div>
     <div><dt>Floor</dt><dd>3 bays of 3.0 × 4.9 m in front, work bay with car lift and machines behind</dd></div>
-    <div><dt>Stairs</dt><dd>16 risers of 175 mm, 281 mm going, 1.0 m wide, 0.95 m rail</dd></div>
+    <div><dt>Stairs</dt><dd>L-shaped, 8 + 8 risers of 175 mm, 281 mm going, 1.0 m wide; 1.0 m square mid-landing at +1.4 m; 0.95 m glass guard</dd></div>
     <div><dt>Levels</dt><dd>Floor to floor 2.8 m; doors 0.9 × 2.1 m; desks 0.74 m</dd></div>
   </dl>
-  <p class="note">Cars, furniture and machines are generic models at real-world size, not your actual equipment. Door positions and the stair run are estimates from your sketch and photo, so check them against the real site.</p>
+  <p class="note">Cars, furniture and machines are generic models at real-world size, not your actual equipment. Door positions, the deck layout and the stair run are estimates from your sketch and photo, so check them against the real site.</p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
@@ -182,8 +183,8 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   var sc = sun.shadow.camera;
   sc.left = -9; sc.right = 9; sc.top = 10; sc.bottom = -10; sc.near = 1; sc.far = 40;
   scene.add(sun);
-  // x, y, z; the last two sit inside the office levels, where the slab would otherwise leave them dark
-  [[0, 6.0, 5.5], [-2.7, 5.3, 2.2], [2.7, 5.3, 2.2], [0, 6.1, -1.0], [0, 5.0, -4.9], [0, 2.5, -4.9]].forEach(function (p) {
+  // x, y, z; the last three sit in the meeting room, on the terrace and in the office, where the deck would otherwise leave them dark
+  [[0, 6.0, 5.5], [-2.7, 5.3, 2.2], [2.7, 5.3, 2.2], [0, 6.1, -1.0], [-1.3, 5.0, -4.9], [2.2, 4.9, -4.8], [0, 2.5, -4.9]].forEach(function (p) {
     var l = new THREE.PointLight(0xfff1dc, 0.5, 11, 1.6);
     l.position.set(p[0], p[1], p[2]); scene.add(l);
   });
@@ -322,7 +323,7 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   var mConcrete = M(0xffffff, { map: texConcrete, bumpMap: texConcrete, bumpScale: 0.5, roughness: 0.42, metalness: 0.0, envMapIntensity: 0.6 });
   var mSteel = M(0x1b2024, { roughness: 0.45, metalness: 0.7 });
   var mGlass = P(0x9ad4cc, { transparent: true, opacity: 0.17, roughness: 0.03, reflectivity: 0.9, envMapIntensity: 2.5, depthWrite: false, side: THREE.DoubleSide });
-  var mWall = M(0xc4c9cc, { roughness: 0.85 });
+  var mWall = M(0x2d3337, { roughness: 0.8 });             // dark-painted partitions, as in the photo
   var mWood = M(0xffffff, { map: texWoodZ, roughness: 0.6 });
   var mWoodX = M(0xffffff, { map: texWoodX, roughness: 0.6 });
   var mLine = M(0xe6c21a, { roughness: 0.7 });
@@ -335,7 +336,7 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   var mFabric = M(0x2f3a45, { roughness: 0.95 });
   var mLift = M(0xe07a1f, { roughness: 0.45, metalness: 0.4 });
   var mScreen = M(0x05070a, { roughness: 0.2, metalness: 0.1, emissive: 0xffffff, emissiveMap: texScreen, emissiveIntensity: 0.9 });
-  var mSlab = M(0x8b9297, { roughness: 0.55, metalness: 0.2 });
+  var mSlab = M(0xa3a7a9, { roughness: 0.7, metalness: 0.0 });   // concrete-look deck slab
   var mTread = M(0x30373d, { roughness: 0.5, metalness: 0.6 });
   var mDoorSheet = M(0xffffff, { map: texCorrDoor, bumpMap: texCorrDoor, bumpScale: 3, roughness: 0.5, metalness: 0.6, color: lin(0xd9dde0) });
 
@@ -374,6 +375,13 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
     m.quaternion.setFromUnitVectors(UP, tv.set(dx, dy, dz).normalize());
     m.castShadow = true;
     (parent || scene).add(m);
+    return m;
+  }
+  // box from a to b (length along a-b, h tall, t thick), kept upright: yaw, then pitch along the run
+  function beam(ax, ay, az, bx, by, bz, h, t, mat, parent, shadow) {
+    var dx = bx - ax, dy = by - ay, dz = bz - az, hl = Math.sqrt(dx * dx + dz * dz);
+    var m = box(Math.sqrt(hl * hl + dy * dy), h, t, (ax + bx) / 2, (ay + by) / 2, (az + bz) / 2, mat, parent, shadow);
+    m.rotation.set(0, Math.atan2(-dz, dx), Math.atan2(dy, hl), 'YXZ');
     return m;
   }
 
@@ -441,42 +449,42 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   });
   box(8.6, 0.12, 0.08, 0, 2.86, FZ - 0.05, mDoorSheet, gdoor);       // bottom bar of the rolled-up curtain
 
-  // ---- office: two levels, glass walls, steel frame
+  // ---- glass boxes, steel frame: office on the ground, meeting room on the left part of the open deck
   var office = grp();
   var upper = grp();
   var ox0 = -2.3, ox1 = 2.3, oz0 = BZ, oz1 = -2.9, oW = 4.6, oD = 4.0, oCx = 0, oCz = (oz0 + oz1) / 2;
-  function level(g, y0, h) {
-    var y = y0 + h / 2;
+  var mx0 = -3.25, mx1 = 0.65, mCx = (mx0 + mx1) / 2;         // meeting room 3.9 x 4.0 m; the left edge stays where the arched roof clears 5.6 m
+  function level(g, y0, h, x0, x1) {
+    var y = y0 + h / 2, w = x1 - x0, cx = (x0 + x1) / 2;
     if (g === office) {                                       // front glass with a 0.9 m door opening at x 0.55..1.45
       box(2.85, h, 0.03, -0.875, y, oz1, mGlass, g, false);
       box(0.85, h, 0.03, 1.875, y, oz1, mGlass, g, false);
       box(0.9, h - 2.1, 0.03, 1.0, 2.1 + (h - 2.1) / 2, oz1, mGlass, g, false);
-    } else box(oW, h, 0.03, oCx, y, oz1, mGlass, g, false);
-    box(0.03, h, oD, ox0, y, oCz, mGlass, g, false);          // left glass
-    if (g === upper) {                                        // right glass with a door to the landing
-      box(0.03, h, 2.55, ox1, y, -5.625, mGlass, g, false);
-      box(0.03, h, 0.55, ox1, y, -3.175, mGlass, g, false);
-      box(0.03, h - 2.1, 0.9, ox1, y0 + 2.1 + (h - 2.1) / 2, -3.9, mGlass, g, false);
-    } else box(0.03, h, oD, ox1, y, oCz, mGlass, g, false);
-    [[ox0, oz1], [ox1, oz1], [ox0, oz0 + 0.05], [ox1, oz0 + 0.05]].forEach(function (p) { box(0.07, h, 0.07, p[0], y, p[1], mSteel, g); });
-    [-0.9, 0.55, 1.45].forEach(function (x) { box(0.05, h, 0.05, x, y, oz1, mSteel, g); });
+    } else box(w, h, 0.03, cx, y, oz1, mGlass, g, false);
+    box(0.03, h, oD, x0, y, oCz, mGlass, g, false);           // left glass
+    if (g === upper) {                                        // right glass with a door onto the terrace
+      box(0.03, h, 2.55, x1, y, -5.625, mGlass, g, false);
+      box(0.03, h, 0.55, x1, y, -3.175, mGlass, g, false);
+      box(0.03, h - 2.1, 0.9, x1, y0 + 2.1 + (h - 2.1) / 2, -3.9, mGlass, g, false);
+    } else box(0.03, h, oD, x1, y, oCz, mGlass, g, false);
+    [[x0, oz1], [x1, oz1], [x0, oz0 + 0.05], [x1, oz0 + 0.05]].forEach(function (p) { box(0.07, h, 0.07, p[0], y, p[1], mSteel, g); });
+    (g === office ? [-0.9, 0.55, 1.45] : [x0 + w / 3, x0 + 2 * w / 3]).forEach(function (x) { box(0.05, h, 0.05, x, y, oz1, mSteel, g); });
     // top and bottom rails round the perimeter
     [y0 + 0.05, y0 + h - 0.03].forEach(function (yy) {
-      box(oW, 0.06, 0.06, oCx, yy, oz1, mSteel, g); box(0.06, 0.06, oD, ox0, yy, oCz, mSteel, g); box(0.06, 0.06, oD, ox1, yy, oCz, mSteel, g);
+      box(w, 0.06, 0.06, cx, yy, oz1, mSteel, g); box(0.06, 0.06, oD, x0, yy, oCz, mSteel, g); box(0.06, 0.06, oD, x1, yy, oCz, mSteel, g);
     });
   }
-  level(office, 0, FLOOR);
-  level(upper, FLOOR, FLOOR);
-  // front door (ground, right): 0.9 x 2.1 glass leaf with steel frame, hinged at x 1.45 and swung open outward
-  box(0.04, 2.1, 0.9, 1.45, 1.05, oz1 + 0.45, mGlass, office, false);
-  box(0.05, 0.06, 0.9, 1.45, 2.07, oz1 + 0.45, mSteel, office); box(0.05, 0.06, 0.9, 1.45, 0.03, oz1 + 0.45, mSteel, office);
-  box(0.05, 2.1, 0.05, 1.45, 1.05, oz1 + 0.9, mSteel, office);
-  box(0.03, 0.03, 0.3, 1.41, 1.0, oz1 + 0.75, mChrome, office);
-  // floor slab at 2.8 m (top flush with the upper level) and open ceiling frame at 5.6 m
-  box(oW + 0.1, 0.12, oD + 0.1, oCx, FLOOR - 0.06, oCz, mSlab, office);
-  box(oW + 0.1, 0.1, 0.1, oCx, FLOOR * 2 + 0.03, oz1, mSteel, upper); box(oW + 0.1, 0.1, 0.1, oCx, FLOOR * 2 + 0.03, oz0 + 0.05, mSteel, upper);
-  [ox0, ox1].forEach(function (x) { box(0.1, 0.1, oD + 0.1, x, FLOOR * 2 + 0.03, oCz, mSteel, upper); });
-  [-1.1, 0, 1.1].forEach(function (x) { box(0.06, 0.1, oD, x, FLOOR * 2 + 0.03, oCz, mSteel, upper); });
+  level(office, 0, FLOOR, ox0, ox1);
+  level(upper, FLOOR, FLOOR, mx0, mx1);
+  // front door (ground, right): 0.9 x 2.1 glass leaf with steel frame, hinged at x 0.55 and swung open outward, clear of the path to the stairs and store
+  box(0.04, 2.1, 0.9, 0.55, 1.05, oz1 + 0.45, mGlass, office, false);
+  box(0.05, 0.06, 0.9, 0.55, 2.07, oz1 + 0.45, mSteel, office); box(0.05, 0.06, 0.9, 0.55, 0.03, oz1 + 0.45, mSteel, office);
+  box(0.05, 2.1, 0.05, 0.55, 1.05, oz1 + 0.9, mSteel, office);
+  box(0.03, 0.03, 0.3, 0.59, 1.0, oz1 + 0.75, mChrome, office);
+  // meeting room open ceiling frame at 5.6 m
+  box(mx1 - mx0 + 0.1, 0.1, 0.1, mCx, FLOOR * 2 + 0.03, oz1, mSteel, upper); box(mx1 - mx0 + 0.1, 0.1, 0.1, mCx, FLOOR * 2 + 0.03, oz0 + 0.05, mSteel, upper);
+  [mx0, mx1].forEach(function (x) { box(0.1, 0.1, oD + 0.1, x, FLOOR * 2 + 0.03, oCz, mSteel, upper); });
+  [-1.1, 0, 1.1].forEach(function (x) { box(0.06, 0.1, oD, mCx + x, FLOOR * 2 + 0.03, oCz, mSteel, upper); });
 
   // furniture helpers (real sizes: desk top 0.74 m, seat 0.45 m)
   function desk(parent, x, z, w, d) {
@@ -519,15 +527,15 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   box(0.45, 1.3, 0.6, 2.05, 0.65, -4.6, mDark, office);
   [0.25, 0.65, 1.05].forEach(function (y) { box(0.01, 0.02, 0.3, 1.82, y, -4.6, mChrome, office); });
   // meeting room upstairs: table 2.4 x 1.0 m, top at 0.74 m, six chairs, wall screen
-  box(2.4, 0.04, 1.0, 0, FLOOR + 0.72, oCz, mWoodX, upper);
-  [-1.0, 1.0].forEach(function (x) { box(0.08, 0.7, 0.8, x, FLOOR + 0.35, oCz, mDark, upper); });
-  [-0.8, 0, 0.8].forEach(function (x) { chair(upper, x, FLOOR, oCz - 0.85, 0); chair(upper, x, FLOOR, oCz + 0.85, Math.PI); });
-  box(1.3, 0.75, 0.04, 0, FLOOR + 1.5, -6.84, mDark, upper);
-  box(1.24, 0.69, 0.004, 0, FLOOR + 1.5, -6.818, mScreen, upper, false);
-  // upper door on the right glass, 0.9 x 2.1, hinged at z -4.35 and swung out onto the landing
-  box(0.9, 2.1, 0.04, ox1 + 0.45, FLOOR + 1.05, -4.35, mGlass, upper, false);
-  box(0.9, 0.05, 0.05, ox1 + 0.45, FLOOR + 2.075, -4.35, mSteel, upper); box(0.9, 0.05, 0.05, ox1 + 0.45, FLOOR + 0.025, -4.35, mSteel, upper);
-  box(0.05, 2.1, 0.05, ox1 + 0.9, FLOOR + 1.05, -4.35, mSteel, upper);
+  box(2.4, 0.04, 1.0, mCx, FLOOR + 0.72, oCz, mWoodX, upper);
+  [-1.0, 1.0].forEach(function (x) { box(0.08, 0.7, 0.8, mCx + x, FLOOR + 0.35, oCz, mDark, upper); });
+  [-0.8, 0, 0.8].forEach(function (x) { chair(upper, mCx + x, FLOOR, oCz - 0.85, 0); chair(upper, mCx + x, FLOOR, oCz + 0.85, Math.PI); });
+  box(1.3, 0.75, 0.04, mCx, FLOOR + 1.5, -6.84, mDark, upper);
+  box(1.24, 0.69, 0.004, mCx, FLOOR + 1.5, -6.818, mScreen, upper, false);
+  // meeting room door on the right glass, 0.9 x 2.1, hinged at z -4.35 and folded right back against the outside of the glass, clear of the terrace
+  box(0.04, 2.1, 0.9, mx1 + 0.04, FLOOR + 1.05, -4.8, mGlass, upper, false);
+  box(0.05, 0.05, 0.9, mx1 + 0.04, FLOOR + 2.075, -4.8, mSteel, upper); box(0.05, 0.05, 0.9, mx1 + 0.04, FLOOR + 0.025, -4.8, mSteel, upper);
+  box(0.05, 2.1, 0.05, mx1 + 0.04, FLOOR + 1.05, -5.25, mSteel, upper);
 
   // ---- side rooms along the back wall (2.8 m partitions, 0.9 x 2.1 louvered doors, doors swung out)
   var rooms = grp();
@@ -566,40 +574,105 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   }
   shelf(2.5, -6.7, 2.0, true);        // back wall, x 2.5..4.5
   shelf(4.4, -6.2, 0.9, false);       // right wall, z -6.2..-5.3
-  // landing slab over the store, top level with the meeting room floor
-  box(2.3, 0.12, 4.0, 3.45, FLOOR - 0.06, -4.9, mSlab, rooms);
-
-  // ---- stairs: 16 risers of 175 mm, 281 mm going, 1.0 m wide, from floor (z = 1.6) up to the landing edge (z = -2.9)
+  // ---- L-shaped stair: 16 risers of 175 mm, 281 mm going, 1.0 m wide, open black steel treads.
+  // Flight 1 (risers 1-8) starts in front of the office glass and climbs +x to a 1.0 m square mid-landing at +1.4 m by the right wall;
+  // flight 2 (risers 9-16) turns left and climbs -z through a stairwell in the deck, arriving at its top riser (z f2z1).
+  var stepH = FLOOR / 16, G = 0.281, RUN = 7 * G, sw = 1.0;
+  var lx0 = 3.45, lz1 = -1.85;                                // landing x lx0..lx0+sw, z lz1..lz1+sw
+  var f1x0 = lx0 - RUN, f1z = lz1 + sw / 2, f2x = lx0 + sw / 2, f2z1 = lz1 - RUN;   // first riser x, flight 1 centre z, flight 2 centre x, top riser z
   var stairs = grp();
-  var steps = 16, runZ = 4.5, rz0 = 1.6, stepD = runZ / steps, stepH = FLOOR / steps, sx = 4.0, sw = 1.0;
-  var slope = FLOOR / runZ;
-  function nose(z) { return stepH + (rz0 - z) * slope; }       // pitch line through the nosings
-  for (var i = 0; i < steps; i++) {
-    box(sw - 0.08, 0.04, stepD + 0.03, sx, (i + 1) * stepH - 0.02, rz0 - (i + 0.5) * stepD + 0.015, mTread, stairs);
-    box(sw - 0.08, stepH - 0.04, 0.02, sx, i * stepH + (stepH - 0.04) / 2, rz0 - i * stepD - 0.04, mSteel, stairs);
+  for (var i = 0; i < 7; i++) {
+    box(G + 0.03, 0.04, sw - 0.08, f1x0 + (i + 0.5) * G - 0.015, (i + 1) * stepH - 0.02, f1z, mTread, stairs);
+    box(sw - 0.08, 0.04, G + 0.03, f2x, (i + 9) * stepH - 0.02, lz1 - (i + 0.5) * G + 0.015, mTread, stairs);
   }
-  var ang = Math.atan2(FLOOR, runZ), len = Math.sqrt(FLOOR * FLOOR + runZ * runZ), zMid = rz0 - runZ / 2;
-  [sx - sw / 2, sx + sw / 2].forEach(function (x) {
-    var s = box(0.06, 0.26, len, x, nose(zMid) - 0.15, zMid, mSteel, stairs);
-    s.rotation.x = ang;
-  });
-  // left side: glass panels between posts, round handrail at 0.95 m above the nosing line
-  var lx = sx - sw / 2, zEnd = rz0 - 15 * stepD;                 // last nosing
-  var span = (rz0 - zEnd) / 4, segLen = span / Math.cos(ang);
-  for (i = 0; i <= 4; i++) { var zp = rz0 - i * span; box(0.05, 1.05, 0.05, lx, nose(zp) + 0.425, zp, mSteel, stairs); }
-  for (i = 0; i < 4; i++) {
-    var zc = rz0 - (i + 0.5) * span;
-    var gp = box(0.012, 0.74, segLen - 0.08, lx, nose(zc) + 0.5, zc, mGlass, stairs, false); gp.rotation.x = ang;
+  box(sw, 0.06, sw, f2x, 8 * stepH - 0.03, f1z, mTread, stairs);                 // mid-landing
+  [[0.05, 0.05], [0.95, 0.05], [0.05, 0.95], [0.95, 0.95]].forEach(function (p) { box(0.07, 8 * stepH - 0.03, 0.07, lx0 + p[0], (8 * stepH - 0.03) / 2, lz1 + p[1], mSteel, stairs); });
+  [lz1, lz1 + sw].forEach(function (z) { beam(f1x0, stepH - 0.15, z, lx0, 8 * stepH - 0.15, z, 0.26, 0.06, mSteel, stairs); });
+  [lx0, lx0 + sw].forEach(function (x) { beam(x, 9 * stepH - 0.15, lz1, x, FLOOR - 0.15, f2z1, 0.26, 0.06, mSteel, stairs); });
+  // glass guard: steel posts, glass panels, black top rail 0.95 m above the line a-b (floor edge or stair nosing line)
+  function guard(ax, ay, az, bx, by, bz, n, parent) {
+    function at(t, dy) { return [ax + (bx - ax) * t, ay + (by - ay) * t + dy, az + (bz - az) * t]; }
+    for (var k = 0; k <= n; k++) { var q = at(k / n, 0.425); box(0.05, 1.05, 0.05, q[0], q[1], q[2], mSteel, parent); }
+    for (k = 0; k < n; k++) { var p0 = at((k + 0.05) / n, 0.5), p1 = at((k + 0.95) / n, 0.5); beam(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], 0.74, 0.012, mGlass, parent, false); }
+    rod(ax, ay + 0.95, az, bx, by + 0.95, bz, 0.025, mSteel, parent);
   }
-  rod(lx, nose(rz0) + 0.95, rz0, lx, nose(zEnd) + 0.95, zEnd, 0.025, mChrome, stairs);
-  rod(lx, FLOOR + 0.95, zEnd, lx, FLOOR + 0.95, -2.92, 0.025, mChrome, stairs);
-  // landing guard along the front edge, left of the flight
-  box(1.2, 0.8, 0.012, 2.9, FLOOR + 0.5, -2.92, mGlass, stairs, false);
-  box(0.05, 1.05, 0.05, 2.33, FLOOR + 0.475, -2.92, mSteel, stairs); box(0.05, 1.05, 0.05, lx, FLOOR + 0.475, -2.92, mSteel, stairs);
-  rod(2.3, FLOOR + 0.95, -2.92, lx, FLOOR + 0.95, -2.92, 0.025, mChrome, stairs);
-  // right side: wall-mounted handrail with brackets
-  rod(4.56, nose(rz0) + 0.95, rz0, 4.56, nose(zEnd) + 0.95, zEnd, 0.025, mChrome, stairs);
-  [0.2, 0.5, 0.8].forEach(function (t) { var zb = rz0 - t * (rz0 - zEnd); box(0.05, 0.03, 0.03, 4.58, nose(zb) + 0.93, zb, mChrome, stairs); });
+  var gi = 0.04;                                              // guards sit 40 mm inside the stringers
+  guard(f1x0, stepH, lz1 + gi, lx0, 8 * stepH, lz1 + gi, 2, stairs);                       // flight 1, office side
+  guard(f1x0, stepH, lz1 + sw - gi, lx0, 8 * stepH, lz1 + sw - gi, 2, stairs);             // flight 1, open side
+  guard(lx0, 8 * stepH, lz1 + sw - gi, lx0 + sw - gi, 8 * stepH, lz1 + sw - gi, 1, stairs);   // landing front
+  guard(lx0 + sw - gi, 8 * stepH, lz1 + sw - gi, lx0 + sw - gi, 8 * stepH, lz1, 1, stairs);  // landing, wall side
+  guard(lx0 + gi, 9 * stepH, lz1, lx0 + gi, FLOOR, f2z1, 2, stairs);                       // flight 2, stairwell side
+  guard(lx0 + sw - gi, 9 * stepH, lz1, lx0 + sw - gi, FLOOR, f2z1, 2, stairs);             // flight 2, wall side
+
+  // ---- open upper deck over the WC, office and store: 150 mm concrete-look slab (top at 2.8 m), stairwell cut at the right,
+  // steel edge beam, black posts, glass guard along the front and round the stairwell
+  var deck = grp();
+  var hx = lx0;                                               // stairwell: x hx..HW, z -2.8..f2z1
+  box(hx + HW, 0.15, 4.1, (hx - HW) / 2, FLOOR - 0.075, -4.85, mSlab, deck);               // x -4.6..3.45, z -6.9..-2.8
+  box(HW - hx, 0.15, f2z1 - BZ, (hx + HW) / 2, FLOOR - 0.075, (f2z1 + BZ) / 2, mSlab, deck);
+  box(hx + HW, 0.2, 0.1, (hx - HW) / 2, FLOOR - 0.25, -2.85, mSteel, deck);
+  box(0.1, FLOOR - 0.15, 0.1, -3.78, (FLOOR - 0.15) / 2, -2.85, mSteel, deck);              // post by the workbench (office corners carry the middle)
+  box(0.1, 5.3, 0.1, hx - 0.05, 2.65, -2.85, mSteel, deck);                                 // stairwell corner post, up to the light frame
+  box(hx - mx1, 0.1, 0.1, (hx + mx1) / 2, 5.3, -2.85, mSteel, deck);                         // light frame over the terrace
+  box(0.1, 0.1, 4.0, hx - 0.05, 5.3, -4.85, mSteel, deck);
+  var mTube = new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 2, 2) });
+  box(0.16, 0.08, 0.16, hx - 0.05, 5.39, -2.85, mTube, deck, false);                        // spot lamp on the post
+  guard(-4.35, FLOOR, -2.85, hx - 0.05, FLOOR, -2.85, 8, deck);
+  guard(hx - 0.05, FLOOR, -2.85, hx - 0.05, FLOOR, f2z1, 1, deck);
+
+  // ---- terrace on the right of the deck: graffiti sign on the back wall, string lights, sofa, bistro sets, plants
+  var texSign = ctex(cv(1024, 384, function (g, w, h) {
+    g.fillStyle = '#ece8e3'; g.fillRect(0, 0, w, h);
+    for (var k = 0; k < 60; k++) {                            // soft spray haze behind the letters
+      var x = rnd() * w, y = rnd() * h, r = 30 + rnd() * 90, gr = g.createRadialGradient(x, y, 0, x, y, r);
+      gr.addColorStop(0, ['rgba(224,64,138,0.18)', 'rgba(60,170,200,0.14)', 'rgba(40,30,50,0.10)'][k % 3]); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r);
+    }
+    var t = 'ZERO GARAGE';
+    g.font = '900 170px Impact, "Arial Black", sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+    var sc = Math.min(1, (w - 90) / g.measureText(t).width); // fit whichever font the system has
+    g.translate(w / 2, h / 2); g.rotate(-0.05); g.scale(sc, sc);
+    g.lineWidth = 36; g.strokeStyle = '#1b1422'; g.strokeText(t, 0, 0);
+    g.lineWidth = 16; g.strokeStyle = '#e0408a'; g.strokeText(t, 0, 0);
+    g.fillStyle = '#fff4f9'; g.fillText(t, 0, 0);
+    g.fillStyle = '#e0408a';
+    for (k = 0; k < 14; k++) g.fillRect(-420 + rnd() * 840, 62 + rnd() * 10, 5, 20 + rnd() * 40);   // paint drips
+  }), 1, 1, true);
+  box(2.7, 1.0, 0.02, 2.15, FLOOR + 1.7, BZ + 0.03, M(0xffffff, { map: texSign, emissive: 0xffffff, emissiveMap: texSign, emissiveIntensity: 0.25 }), deck, false);
+  var mBulb = new THREE.MeshBasicMaterial({ color: new THREE.Color(2.4, 1.7, 0.8) }), mWire = new THREE.LineBasicMaterial({ color: 0x111111 });
+  function lights(ax, ay, az, bx, by, bz, sag, n) {           // sagging string with a bulb every 1/n
+    var pts = [];
+    for (var k = 0; k <= n; k++) {
+      var t = k / n, p = new THREE.Vector3(ax + (bx - ax) * t, ay + (by - ay) * t - sag * 4 * t * (1 - t), az + (bz - az) * t);
+      pts.push(p);
+      if (k && k < n) ball(0.035, p.x, p.y - 0.05, p.z, mBulb, deck).castShadow = false;
+    }
+    deck.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mWire));
+  }
+  [1.0, 1.8, 2.6].forEach(function (x) { lights(x, 5.25, -2.85, x + 0.4, 5.15, BZ + 0.05, 0.45, 14); });
+  lights(mx1 + 0.05, 5.25, -2.9, hx - 0.1, 5.25, -2.9, 0.25, 10);
+  lights(0.8, 5.15, BZ + 0.05, 3.35, 5.15, BZ + 0.05, 0.3, 10);
+  // sofa (seat 0.45 m) with a pink neon strip, coffee table
+  var mSofa = M(0xe9e1e4, { roughness: 0.9 });
+  box(2.2, 0.45, 0.85, 2.15, FLOOR + 0.225, -6.4, mSofa, deck);
+  box(2.2, 0.4, 0.2, 2.15, FLOOR + 0.65, -6.73, mSofa, deck);
+  [-1, 1].forEach(function (s) { box(0.2, 0.62, 0.85, 2.15 + s * 1.1, FLOOR + 0.31, -6.4, mSofa, deck); });
+  box(2.44, 0.03, 0.03, 2.15, FLOOR + 0.03, -5.96, new THREE.MeshBasicMaterial({ color: new THREE.Color(2.0, 0.35, 1.2) }), deck, false);
+  box(1.0, 0.04, 0.5, 2.15, FLOOR + 0.4, -5.45, mWoodX, deck); box(0.9, 0.36, 0.4, 2.15, FLOOR + 0.19, -5.45, mDark, deck);
+  function bistro(x, z) {                                     // round table 0.6 m, top at 0.74 m, a chair either side
+    cyl(0.3, 0.3, 0.03, x, FLOOR + 0.725, z, mWoodX, deck);
+    cyl(0.03, 0.03, 0.7, x, FLOOR + 0.36, z, mSteel, deck);
+    cyl(0.2, 0.2, 0.02, x, FLOOR + 0.01, z, mSteel, deck);
+    chair(deck, x - 0.55, FLOOR, z, Math.PI / 2); chair(deck, x + 0.55, FLOOR, z, -Math.PI / 2);
+  }
+  bistro(2.35, -3.45); bistro(3.75, -5.1);
+  var mLeaf = M(0x3d7a3a, { roughness: 0.85 });
+  function plant(x, z) {
+    cyl(0.18, 0.14, 0.42, x, FLOOR + 0.21, z, mDark, deck);
+    ball(0.3, x, FLOOR + 0.75, z, mLeaf, deck, 1, 1.3, 1);
+    ball(0.22, x + 0.12, FLOOR + 1.05, z - 0.06, mLeaf, deck);
+  }
+  plant(3.75, -6.55); plant(1.0, -3.2);
 
   // ---- workbench, left wall: 2.0 x 0.7 m, 0.9 m high, drawers, pegboard with tools
   var bench = grp();
@@ -627,15 +700,16 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
 
   // ---- machines, right of the work bay
   var machines = grp();
-  // drill press: base, column, table, head with motor and quill
-  box(0.5, 0.05, 0.4, 2.5, 0.025, -1.4, mDark, machines);
-  cyl(0.04, 0.04, 1.65, 2.5, 0.875, -1.52, mChrome, machines);
-  cyl(0.14, 0.14, 0.03, 2.5, 0.85, -1.4, mDark, machines);
-  box(0.12, 0.05, 0.14, 2.5, 0.85, -1.5, mDark, machines);
-  box(0.26, 0.3, 0.32, 2.5, 1.55, -1.45, mLift, machines);
-  cyl(0.07, 0.07, 0.2, 2.5, 1.8, -1.45, mDark, machines);
-  cyl(0.02, 0.02, 0.22, 2.5, 1.33, -1.33, mChrome, machines); cyl(0.035, 0.03, 0.08, 2.5, 1.2, -1.33, mChrome, machines);
-  [0, 1, 2].forEach(function (k) { var a = k * 2.1; rod(2.63, 1.5, -1.33, 2.63 + Math.cos(a) * 0.18, 1.5 + Math.sin(a) * 0.18, -1.33, 0.012, mChrome, machines); });
+  // drill press: base, column, table, head with motor and quill; moved by (+1.5, +1.9) to x 4.0, z 0.5 to clear the first stair flight
+  var drill = grp(machines); drill.position.set(1.5, 0, 1.9);
+  box(0.5, 0.05, 0.4, 2.5, 0.025, -1.4, mDark, drill);
+  cyl(0.04, 0.04, 1.65, 2.5, 0.875, -1.52, mChrome, drill);
+  cyl(0.14, 0.14, 0.03, 2.5, 0.85, -1.4, mDark, drill);
+  box(0.12, 0.05, 0.14, 2.5, 0.85, -1.5, mDark, drill);
+  box(0.26, 0.3, 0.32, 2.5, 1.55, -1.45, mLift, drill);
+  cyl(0.07, 0.07, 0.2, 2.5, 1.8, -1.45, mDark, drill);
+  cyl(0.02, 0.02, 0.22, 2.5, 1.33, -1.33, mChrome, drill); cyl(0.035, 0.03, 0.08, 2.5, 1.2, -1.33, mChrome, drill);
+  [0, 1, 2].forEach(function (k) { var a = k * 2.1; rod(2.63, 1.5, -1.33, 2.63 + Math.cos(a) * 0.18, 1.5 + Math.sin(a) * 0.18, -1.33, 0.012, mChrome, drill); });
   // compressor: horizontal tank on legs with wheels, pump and motor on top
   var mTank = M(0x2c6e8f, { roughness: 0.4, metalness: 0.4 });
   cyl(0.28, 0.28, 0.9, 2.0, 0.58, -0.5, mTank, machines, 'x');
@@ -736,7 +810,6 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   box(0.2, 0.45, 0.14, -1.82, 1.1, -1.6, mDark, lift);                      // hydraulic unit
 
   // ---- hanging tube lights
-  var mTube = new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 2, 2) });
   function tube(x, z, y) {
     box(1.2, 0.04, 0.14, x, y + 0.03, z, mWhite, scene, false);
     box(1.15, 0.02, 0.08, x, y, z, mTube, scene, false);
@@ -776,8 +849,9 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   dim([-HW, 0.03, FZ + 0.9], [HW, 0.03, FZ + 0.9], [0, 0, 0.18], 'Width 9.2 m'); seg([-HW, 0.03, FZ], [-HW, 0.03, FZ + 1.1]); seg([HW, 0.03, FZ], [HW, 0.03, FZ + 1.1]);
   dim([-HW - 0.9, 0.03, BZ], [-HW - 0.9, 0.03, FZ], [0.18, 0, 0], 'Depth 13.8 m'); seg([-HW, 0.03, BZ], [-HW - 1.1, 0.03, BZ]); seg([-HW, 0.03, FZ], [-HW - 1.1, 0.03, FZ]);
   dim([0, 0, FZ + 0.4], [0, topY, FZ + 0.4], [0.18, 0, 0], 'Peak 7.0 m', 0); seg([0, topY, FZ], [0, topY, FZ + 0.6]);
-  dim([ox0, FLOOR * 2 + 0.35, oz1], [ox1, FLOOR * 2 + 0.35, oz1], [0, 0.18, 0], 'Office 4.6 m');
-  dim([ox0 - 0.0, FLOOR * 2 + 0.35, oz0], [ox0, FLOOR * 2 + 0.35, oz1], [0.18, 0, 0], 'Office 4.0 m');
+  dim([ox0, FLOOR - 0.45, oz1], [ox1, FLOOR - 0.45, oz1], [0, 0.18, 0], 'Office 4.6 m');
+  dim([ox0, FLOOR - 0.45, oz0], [ox0, FLOOR - 0.45, oz1], [0.18, 0, 0], 'Office 4.0 m');
+  dim([lx0 + sw + 0.05, 0, lz1 + sw + 0.1], [lx0 + sw + 0.05, 8 * stepH, lz1 + sw + 0.1], [0.18, 0, 0], 'Landing +1.4 m');
   dim([-2.7, 0, oz1 - 0.1], [-2.7, FLOOR, oz1 - 0.1], [0.18, 0, 0], 'Upper floor +2.8 m'); seg([ox0, FLOOR, oz1 - 0.1], [-2.7, FLOOR, oz1 - 0.1]);
   dim([-2.7, FLOOR, oz1 - 0.1], [-2.7, FLOOR * 2, oz1 - 0.1], [0.18, 0, 0], 'Ceiling +5.6 m');
   var dimGeo = new THREE.BufferGeometry(); dimGeo.setAttribute('position', new THREE.Float32BufferAttribute(dv, 3));
@@ -790,9 +864,9 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
 
   // ---- labels
   [
-    ['Office', 0, 1.6, -4.9], ['Meeting room', 0, 4.4, -4.9, 'upper'], ['WC', -3.4, 1.8, -6.0], ['Pantry', -1.5, 1.8, -6.6],
-    ['Store', 3.4, 1.7, -6.0], ['Stairs', 4.0, 1.7, -0.7], ['Work bay', -2.1, 1.6, -0.35], ['Car lift', -2.0, 3.4, -0.35],
-    ['Machines', 2.2, 1.9, -0.8], ['Workbench', -4.2, 1.3, -3.6],
+    ['Office', 0, 1.6, -4.9], ['Meeting room', mCx, 4.4, -4.9, 'upper'], ['Terrace', 2.15, 3.9, -4.4], ['WC', -3.4, 1.8, -6.0], ['Pantry', -1.5, 1.8, -6.6],
+    ['Store', 3.4, 1.7, -6.0], ['Stairs', 2.4, 1.9, -1.35], ['Mid-landing', f2x, 2.3, f1z], ['Work bay', -2.1, 1.6, -0.35], ['Car lift', -2.0, 3.4, -0.35],
+    ['Machines', 2.8, 1.9, 0.3], ['Workbench', -4.2, 1.3, -3.6],
     ['Parking 1', -3.0, 1.8, 4.5], ['Parking 2', 0, 1.8, 4.5], ['Parking 3', 3.0, 1.8, 4.5], ['Garage door', 0, 3.7, FZ],
     ['Person 1.75 m', 1.5, 2.0, 6.1, 'people']
   ].forEach(function (t) { tag(t[0], t[1], t[2], t[3], t[4]); });
@@ -842,7 +916,7 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
   function rect(x0, x1, z0, z1) { return { x0: x0, x1: x1, z0: z0, z1: z1 }; }
   var solids = [
     rect(-2.35, 0.55, -2.97, -2.83), rect(1.45, 2.35, -2.97, -2.83),   // office front wall, 0.9 m door gap between
-    rect(1.42, 1.48, -2.9, -2.0),                                       // open office door leaf
+    rect(0.52, 0.58, -2.9, -2.0),                                       // open office door leaf
     rect(-2.37, -2.23, -6.95, -2.83), rect(2.23, 2.37, -6.95, -2.83), // office side walls
     rect(-4.65, -3.5, -5.25, -5.15), rect(-2.6, -2.3, -5.25, -5.15),  // WC wall, 0.9 m door gap between
     rect(-3.53, -3.47, -5.2, -4.3),                                    // open WC door leaf
@@ -853,17 +927,33 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
     rect(-4.4, -4.0, -6.9, -6.2), rect(-3.5, -2.9, -6.9, -6.45),       // WC toilet, basin
     rect(2.35, 4.55, -6.9, -6.5), rect(4.2, 4.65, -6.5, -5.3),         // store shelving
     rect(-4.6, -4.05, -2.5, -1.6),                                     // tool chest
-    rect(2.2, 2.8, -1.7, -1.1), rect(1.5, 2.5, -0.8, -0.2), rect(1.65, 2.95, 0.3, 1.1),  // drill press, compressor, lathe
+    rect(3.7, 4.3, 0.2, 0.8), rect(1.5, 2.5, -0.8, -0.2), rect(1.65, 2.95, 0.3, 1.1),    // drill press, compressor, lathe
     rect(-4.6, -3.85, -4.6, -2.6),                                     // workbench
     rect(-2.17, -1.83, -1.77, -1.43), rect(-2.17, -1.83, 0.73, 1.07),  // lift posts
-    rect(1.25, 1.75, 5.85, 6.35)                                       // person (scale figure)
+    rect(1.25, 1.75, 5.85, 6.35),                                      // person (scale figure)
+    rect(-3.83, -3.73, -2.9, -2.8),                                    // deck post by the workbench
+    rect(f1x0 + 0.3, 4.65, lz1, lz1 + sw), rect(lx0 - 0.1, 4.65, f2z1, lz1)   // under flight 1 and the landing; under flight 2 and its corner post
   ];
   var carRects = [rect(-3.95, -2.05, 2.28, 6.72), rect(-0.95, 0.95, 2.28, 6.72), rect(2.05, 3.95, 2.28, 6.72), rect(-4.32, 0.12, -1.3, 0.6)];
-  var upperOK = [rect(2.35, 4.35, -6.75, -3.05), rect(3.55, 4.35, -3.05, -2.8), rect(-2.15, 2.15, -6.75, -3.05), rect(2.0, 2.5, -4.3, -3.5)];
-  var upperSolid = rect(-1.25, 1.25, -5.45, -4.35);
+  // upper level: meeting room and its door, terrace beside and behind the stairwell (x stops at 4.2 where the arched roof gets low)
+  var upperOK = [rect(mx0 + 0.15, mx1 - 0.15, -6.75, -3.1), rect(mx1 - 0.25, mx1 + 0.25, -4.3, -3.5),
+    rect(mx1 + 0.2, hx - 0.25, -6.75, -3.05), rect(mx1 + 0.2, 4.2, -6.75, f2z1 - 0.03)];
+  var upperSolids = [
+    rect(mCx - 1.25, mCx + 1.25, -5.45, -4.35), rect(mx1, mx1 + 0.08, -5.25, -4.35),   // meeting table, folded-back door leaf
+    rect(0.95, 3.35, -6.9, -5.95), rect(1.65, 2.65, -5.7, -5.2),                     // sofa, coffee table
+    rect(1.55, 3.15, -3.75, -3.15), rect(2.95, 4.55, -5.4, -4.8),                    // bistro sets
+    rect(3.55, 3.95, -6.75, -6.35), rect(0.8, 1.2, -3.4, -3.0)                       // plants
+  ];
+  // walkable stair zone: flight 1 + landing, landing + flight 2 (kept 0.12-0.25 m inside the guards)
+  var stairRects = [rect(f1x0, lx0 + sw - 0.15, lz1 + 0.12, lz1 + sw - 0.12), rect(lx0 + 0.15, 4.2, f2z1 - 0.13, lz1 + sw - 0.12)];
   function hit(r, x, z) { return x > r.x0 - RAD && x < r.x1 + RAD && z > r.z0 - RAD && z < r.z1 + RAD; }
   function inside(r, x, z) { return x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1; }
-  function inS(x, z) { return x >= 3.55 && x <= 4.45 && z >= -2.9 && z <= 1.6; }
+  function inS(x, z) { return inside(stairRects[0], x, z) || inside(stairRects[1], x, z); }
+  // floor height on the stair: flight 1 ramps 0 -> 1.4 m over x f1x0..lx0, the landing is level, flight 2 ramps 1.4 -> 2.8 m over z lz1..f2z1
+  function stairY(x, z) {
+    var t = z < lz1 ? 1 + Math.min(1, (lz1 - z) / RUN) : Math.max(0, Math.min(1, (x - f1x0) / RUN));
+    return t * FLOOR / 2;
+  }
   function groundOK(x, z) {
     if (x < -4.35 || x > 4.35 || z < -6.75 || z > 6.6) return false;
     var i;
@@ -872,19 +962,21 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
     return true;
   }
   function upperOKAt(x, z) {
-    if (hit(upperSolid, x, z)) return false;
-    for (var i = 0; i < upperOK.length; i++) if (inside(upperOK[i], x, z)) return true;
+    var i;
+    for (i = 0; i < upperSolids.length; i++) if (hit(upperSolids[i], x, z)) return false;
+    for (i = 0; i < upperOK.length; i++) if (inside(upperOK[i], x, z)) return true;
     return false;
   }
   function allowed(nx, nz) {
     var curS = inS(walk.x, walk.z);
     if (inS(nx, nz)) {
       if (curS) return true;
-      if (walk.lvl === 0 && nz > 1.2) return true;
-      if (walk.lvl === 1 && nz < -2.6) return true;
+      if (walk.lvl === 0 && walk.x < f1x0) return true;   // onto the first tread from the floor in front of it
+      if (walk.lvl === 1 && walk.z < f2z1) return true;   // down from the deck past the top riser
       return false;
     }
-    if (curS) return nz < -2.9 ? upperOKAt(nx, nz) : (nz > 1.6 ? groundOK(nx, nz) : false);
+    // off the stair only at its two ends: past the top riser onto the deck, or back past the first riser onto the floor
+    if (curS) return nz < f2z1 ? upperOKAt(nx, nz) : (nx < f1x0 ? groundOK(nx, nz) : false);
     if (walk.lvl === 1) return upperOKAt(nx, nz);
     if (!groundOK(walk.x, walk.z)) return true; // already inside something (e.g. cars shown again): let the walker leave
     return groundOK(nx, nz);
@@ -893,10 +985,10 @@ button[aria-pressed="true"] { background: var(--accent); border-color: var(--acc
     if (!allowed(nx, nz)) return;
     var wasS = inS(walk.x, walk.z);
     walk.x = nx; walk.z = nz;
-    if (wasS && !inS(nx, nz)) walk.lvl = nz < -2.9 ? 1 : 0;
+    if (wasS && !inS(nx, nz)) walk.lvl = nz < f2z1 ? 1 : 0;
   }
-  function eyeY() {   // ramp across the flight: 0 at z = rz0, FLOOR at the landing edge (matches the 16-riser stair above)
-    var py = inS(walk.x, walk.z) ? Math.max(0, Math.min(FLOOR, (rz0 - walk.z) / runZ * FLOOR)) : (walk.lvl ? FLOOR : 0);
+  function eyeY() {
+    var py = inS(walk.x, walk.z) ? stairY(walk.x, walk.z) : (walk.lvl ? FLOOR : 0);
     return py + 1.65;
   }
   function updateWalk(dt) {
